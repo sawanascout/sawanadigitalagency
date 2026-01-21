@@ -4,19 +4,20 @@ import { useRef, useState } from "react"
 import Link from "next/link"
 
 export default function ContactPage() {
-  const contactForm = useRef<HTMLFormElement>(null)
-  const inscriptionForm = useRef<HTMLFormElement>(null)
+  const contactForm = useRef<HTMLFormElement | null>(null)
+  const inscriptionForm = useRef<HTMLFormElement | null>(null)
 
   const [sentContact, setSentContact] = useState(false)
   const [sentInscription, setSentInscription] = useState(false)
 
   const handleSubmit = async (
     e: React.FormEvent,
-    formRef: React.RefObject<HTMLFormElement>,
+    formRef: React.RefObject<HTMLFormElement | null>,
     setSent: (val: boolean) => void
   ) => {
     e.preventDefault()
-    if (!formRef.current) return
+
+    if (!formRef.current) return // ✅ vérification null
 
     const data = new FormData(formRef.current)
 
@@ -69,7 +70,7 @@ export default function ContactPage() {
               </h2>
               <form
                 ref={contactForm}
-                onSubmit={(e) => handleSubmit(e, contactForm, setSentContact)}
+                onSubmit={(e) => handleSubmit(e, contactForm as React.RefObject<HTMLFormElement>, setSentContact)}
                 className="flex flex-col space-y-4"
               >
                 <input
@@ -120,7 +121,7 @@ export default function ContactPage() {
               </h2>
               <form
                 ref={inscriptionForm}
-                onSubmit={(e) => handleSubmit(e, inscriptionForm, setSentInscription)}
+                onSubmit={(e) => handleSubmit(e, inscriptionForm as React.RefObject<HTMLFormElement>, setSentInscription)}
                 className="flex flex-col space-y-4"
               >
                 <input
