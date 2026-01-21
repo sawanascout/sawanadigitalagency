@@ -1,0 +1,9 @@
+/* styles/globals.css */
+
+@tailwind utilities;
+
+/* Optionnel : style global */
+body {
+  font-family: system-ui, sans-serif;
+  background-color: #f9fafb;
+}
