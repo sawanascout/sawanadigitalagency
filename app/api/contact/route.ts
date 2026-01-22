@@ -6,6 +6,12 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { name, email, message, objectif, type } = body
 
+    console.log("🔍 Variables d'env disponibles:", {
+      SMTP_USER: process.env.SMTP_USER ? "✓ défini" : "✗ manquant",
+      SMTP_PASS: process.env.SMTP_PASS ? "✓ défini" : "✗ manquant",
+      MAIL_TO: process.env.MAIL_TO ? "✓ défini" : "✗ manquant",
+    })
+
     // Validation
     if (!name?.trim() || !email?.trim()) {
       return NextResponse.json(
@@ -15,10 +21,16 @@ export async function POST(req: Request) {
     }
 
     // Vérification des variables d'environnement
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.error("Variables SMTP manquantes")
+    const smtpUser = process.env.SMTP_USER?.trim()
+    const smtpPass = process.env.SMTP_PASS?.trim()
+
+    if (!smtpUser || !smtpPass) {
+      console.error("❌ Variables SMTP manquantes ou vides", {
+        smtpUser: smtpUser ? "ok" : "manquant",
+        smtpPass: smtpPass ? "ok" : "manquant",
+      })
       return NextResponse.json(
-        { error: "Service de messagerie non configuré" },
+        { error: "Service de messagerie non configuré sur le serveur" },
         { status: 500 }
       )
     }
@@ -26,13 +38,15 @@ export async function POST(req: Request) {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: smtpUser,
+        pass: smtpPass,
       },
     })
 
     // Test de connexion
+    console.log("📧 Test de connexion au serveur SMTP...")
     await transporter.verify()
+    console.log("✓ Connexion SMTP réussie")
 
     const subject =
       type === "accompagnement"
@@ -47,19 +61,22 @@ export async function POST(req: Request) {
       ${message ? `<p><strong>Message :</strong><br/>${message.replace(/\n/g, "<br/>")}</p>` : ""}
     `
 
+    console.log("📤 Envoi de l'email...")
     await transporter.sendMail({
-      from: `"Site Web SDA" <${process.env.SMTP_USER}>`,
-      to: process.env.MAIL_TO || process.env.SMTP_USER,
+      from: `"Site Web SDA" <${smtpUser}>`,
+      to: process.env.MAIL_TO?.trim() || smtpUser,
       replyTo: email,
       subject,
       html,
     })
 
+    console.log("✓ Email envoyé avec succès")
     return NextResponse.json({ success: true, message: "Email envoyé avec succès" })
   } catch (error) {
-    console.error("Erreur email :", error)
+    console.error("❌ Erreur email :", error)
+    const errorMessage = error instanceof Error ? error.message : "Erreur inconnue"
     return NextResponse.json(
-      { error: "Impossible d'envoyer le message. Veuillez réessayer." },
+      { error: `Erreur lors de l'envoi: ${errorMessage}` },
       { status: 500 }
     )
   }
