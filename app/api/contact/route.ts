@@ -4,12 +4,22 @@ import { NextResponse } from "next/server"
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { name, email, message, formation, type } = body
+    const { name, email, message, objectif, type } = body
 
-    if (!name || !email) {
+    // Validation
+    if (!name?.trim() || !email?.trim()) {
       return NextResponse.json(
-        { error: "Champs manquants" },
+        { error: "Nom et email sont obligatoires" },
         { status: 400 }
+      )
+    }
+
+    // Vérification des variables d'environnement
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.error("Variables SMTP manquantes")
+      return NextResponse.json(
+        { error: "Service de messagerie non configuré" },
+        { status: 500 }
       )
     }
 
@@ -21,32 +31,35 @@ export async function POST(req: Request) {
       },
     })
 
+    // Test de connexion
+    await transporter.verify()
+
     const subject =
-      type === "inscription"
-        ? "📩 Nouvelle inscription à une formation"
+      type === "accompagnement"
+        ? "📩 Nouvelle demande d'accompagnement"
         : "📩 Nouveau message de contact"
 
     const html = `
       <h2>${subject}</h2>
       <p><strong>Nom :</strong> ${name}</p>
       <p><strong>Email :</strong> ${email}</p>
-      ${formation ? `<p><strong>Formation :</strong> ${formation}</p>` : ""}
-      ${message ? `<p><strong>Message :</strong><br/>${message}</p>` : ""}
+      ${objectif ? `<p><strong>Objectif :</strong> ${objectif}</p>` : ""}
+      ${message ? `<p><strong>Message :</strong><br/>${message.replace(/\n/g, "<br/>")}</p>` : ""}
     `
 
     await transporter.sendMail({
-      from: `"Site Web" <${process.env.SMTP_USER}>`,
+      from: `"Site Web SDA" <${process.env.SMTP_USER}>`,
       to: process.env.MAIL_TO || process.env.SMTP_USER,
       replyTo: email,
       subject,
       html,
     })
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, message: "Email envoyé avec succès" })
   } catch (error) {
     console.error("Erreur email :", error)
     return NextResponse.json(
-      { success: false },
+      { error: "Impossible d'envoyer le message. Veuillez réessayer." },
       { status: 500 }
     )
   }

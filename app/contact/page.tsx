@@ -10,6 +10,7 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(false)
   const [sentContact, setSentContact] = useState(false)
   const [sentAccompagnement, setSentAccompagnement] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (
     e: React.FormEvent,
@@ -21,12 +22,13 @@ export default function ContactPage() {
     if (!formRef.current) return
 
     setLoading(true)
+    setError(null)
 
     // Normalisation des données
     const formData = new FormData(formRef.current)
-    const data = Object.fromEntries(formData.entries())
-    for (let key in data) {
-      data[key] = data[key] ? String(data[key]).trim() : ""
+    const data: Record<string, string> = {}
+    for (const [key, value] of formData.entries()) {
+      data[key] = value ? String(value).trim() : ""
     }
 
     try {
@@ -36,15 +38,17 @@ export default function ContactPage() {
         body: JSON.stringify({ ...data, type }),
       })
 
+      const responseData = await res.json()
+
       if (res.ok) {
         setSent(true)
         formRef.current.reset()
       } else {
-        alert("Une erreur est survenue. Veuillez réessayer.")
+        setError(responseData.error || "Une erreur est survenue. Veuillez réessayer.")
       }
     } catch (err) {
       console.error(err)
-      alert("Erreur serveur. Veuillez réessayer plus tard.")
+      setError("Erreur de connexion. Veuillez vérifier votre connexion internet et réessayer.")
     } finally {
       setLoading(false)
     }
@@ -72,6 +76,12 @@ export default function ContactPage() {
             <>
               <h2 className="mb-2 text-2xl font-semibold text-blue-600">Nous contacter</h2>
               <p className="mb-6 text-gray-500">Une question ? Un partenariat ? Parlons-en.</p>
+
+              {error && (
+                <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-lg">
+                  {error}
+                </div>
+              )}
 
               <form
                 ref={contactForm}
@@ -126,6 +136,12 @@ export default function ContactPage() {
             <>
               <h2 className="mb-2 text-2xl font-semibold">Démarrer votre accompagnement</h2>
               <p className="mb-6 text-gray-300">Recevez un plan personnalisé selon votre objectif.</p>
+
+              {error && (
+                <div className="p-4 mb-4 text-red-200 bg-red-900 rounded-lg">
+                  {error}
+                </div>
+              )}
 
               <form
                 ref={accompagnementForm}
