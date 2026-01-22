@@ -4,170 +4,207 @@ import { useRef, useState } from "react"
 import Link from "next/link"
 
 export default function ContactPage() {
-  const contactForm = useRef<HTMLFormElement | null>(null)
-  const inscriptionForm = useRef<HTMLFormElement | null>(null)
+  const contactForm = useRef<HTMLFormElement>(null)
+  const accompagnementForm = useRef<HTMLFormElement>(null)
 
+  const [loading, setLoading] = useState(false)
   const [sentContact, setSentContact] = useState(false)
-  const [sentInscription, setSentInscription] = useState(false)
+  const [sentAccompagnement, setSentAccompagnement] = useState(false)
 
   const handleSubmit = async (
     e: React.FormEvent,
     formRef: React.RefObject<HTMLFormElement | null>,
-    setSent: (val: boolean) => void
+    setSent: (v: boolean) => void,
+    type: "contact" | "accompagnement"
   ) => {
     e.preventDefault()
+    if (!formRef.current) return
 
-    if (!formRef.current) return // ✅ vérification null
+    setLoading(true)
 
-    const data = new FormData(formRef.current)
+    const formData = new FormData(formRef.current)
+    const data = Object.fromEntries(formData.entries())
 
     try {
-      const response = await fetch("https://formspree.io/f/xqeewqqk", {
+      const res = await fetch("/api/contact", {
         method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...data, type }),
       })
 
-      if (response.ok) {
+      if (res.ok) {
         setSent(true)
+        formRef.current.reset()
       } else {
-        alert("Erreur lors de l'envoi, veuillez réessayer.")
+        alert("Une erreur est survenue")
       }
-    } catch (error) {
-      alert("Erreur lors de l'envoi, veuillez réessayer.")
+    } catch {
+      alert("Erreur serveur")
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-12 flex flex-col items-center space-y-16">
+    <main className="min-h-screen px-6 py-20 bg-linear-to-br from-gray-50 to-gray-100">
 
-      {/* ================= HEADER ================= */}
-      <header className="w-full max-w-4xl text-center">
-        <h1 className="text-4xl md:text-5xl font-bold mb-2 text-blue-600">
-          Contact & Inscription
+      {/* HEADER */}
+      <header className="max-w-5xl mx-auto mb-20 text-center">
+        <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
+          Discutons de votre projet 🚀
         </h1>
-        <p className="text-gray-600">
-          Vous pouvez nous envoyer un message ou vous inscrire à une formation
+        <p className="mt-5 text-lg text-gray-600">
+          Notre équipe vous répond sous <strong>24h</strong> avec une solution adaptée.
         </p>
       </header>
 
-      {/* ================= BOUTON RETOUR ================= */}
-      <Link
-        href="/"
-        className="self-start mb-6 px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-      >
-        ← Retour à l'accueil
-      </Link>
+      {/* FORMULAIRES */}
+      <div className="grid max-w-6xl grid-cols-1 mx-auto md:grid-cols-2 gap-14">
 
-      <div className="flex flex-col md:flex-row gap-12 w-full max-w-6xl">
-
-        {/* ================= FORMULAIRE CONTACT ================= */}
-        <div className="flex-1 bg-white shadow-lg rounded-xl p-8 space-y-6">
+        {/* CONTACT */}
+        <section className="p-10 bg-white border shadow-xl rounded-2xl">
           {!sentContact ? (
             <>
-              <h2 className="text-2xl font-bold text-center mb-4 text-blue-600">
+              <h2 className="mb-2 text-2xl font-semibold text-blue-600">
                 Nous contacter
               </h2>
+              <p className="mb-6 text-gray-500">
+                Une question ? Un partenariat ? Parlons-en.
+              </p>
+
               <form
                 ref={contactForm}
-                onSubmit={(e) => handleSubmit(e, contactForm as React.RefObject<HTMLFormElement>, setSentContact)}
-                className="flex flex-col space-y-4"
+                onSubmit={(e) =>
+                  handleSubmit(e, contactForm, setSentContact, "contact")
+                }
+                className="space-y-5"
               >
                 <input
-                  type="text"
                   name="name"
-                  placeholder="Votre nom"
+                  placeholder="Nom complet"
                   required
-                  className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full p-4 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 />
+
                 <input
-                  type="email"
                   name="email"
-                  placeholder="Votre email"
+                  type="email"
+                  placeholder="Adresse email"
                   required
-                  className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full p-4 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 />
+
                 <textarea
                   name="message"
                   placeholder="Votre message"
                   rows={5}
                   required
-                  className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="w-full p-4 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                 />
+
                 <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                  disabled={loading}
+                  className="w-full py-4 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
                 >
-                  Envoyer le message
+                  {loading ? "Envoi en cours..." : "Parler à un expert"}
                 </button>
+
+                <p className="text-xs text-center text-gray-400">
+                  🔒 Vos informations restent confidentielles
+                </p>
               </form>
             </>
           ) : (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Merci 🙏</h2>
-              <p className="text-gray-600">
-                Votre message a bien été envoyé. Nous vous répondrons très bientôt.
-              </p>
-            </div>
+            <p className="font-medium text-center text-green-600">
+              ✅ Message envoyé avec succès
+            </p>
           )}
-        </div>
+        </section>
 
-        {/* ================= FORMULAIRE INSCRIPTION ================= */}
-        <div className="flex-1 bg-white shadow-lg rounded-xl p-8 space-y-6">
-          {!sentInscription ? (
+        {/* ACCOMPAGNEMENT */}
+        <section className="p-10 text-white bg-gray-900 shadow-xl rounded-2xl">
+          {!sentAccompagnement ? (
             <>
-              <h2 className="text-2xl font-bold text-center mb-4 text-green-600">
-                S'inscrire à une formation
+              <h2 className="mb-2 text-2xl font-semibold">
+                Démarrer votre accompagnement
               </h2>
+              <p className="mb-6 text-gray-300">
+                Recevez un plan personnalisé selon votre objectif.
+              </p>
+
               <form
-                ref={inscriptionForm}
-                onSubmit={(e) => handleSubmit(e, inscriptionForm as React.RefObject<HTMLFormElement>, setSentInscription)}
-                className="flex flex-col space-y-4"
+                ref={accompagnementForm}
+                onSubmit={(e) =>
+                  handleSubmit(
+                    e,
+                    accompagnementForm,
+                    setSentAccompagnement,
+                    "accompagnement"
+                  )
+                }
+                className="space-y-5"
               >
                 <input
-                  type="text"
                   name="name"
                   placeholder="Nom complet"
                   required
-                  className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg"
                 />
+
                 <input
-                  type="email"
                   name="email"
-                  placeholder="Email"
+                  type="email"
+                  placeholder="Adresse email"
                   required
-                  className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg"
                 />
+
                 <select
-                  name="formation"
+                  name="objectif"
                   required
-                  className="w-full border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full p-4 text-gray-300 bg-gray-800 border border-gray-700 rounded-lg"
                 >
-                  <option value="">Sélectionnez la formation</option>
-                  <option value="Développement Web">Développement Web</option>
-                  <option value="Applications Mobiles">Applications Mobiles</option>
-                  <option value="UI/UX Design">UI/UX Design</option>
-                  <option value="Marketing Digital">Marketing Digital</option>
+                  <option value="">Votre objectif</option>
+                  <option>Lancer un projet digital</option>
+                  <option>Se former au numérique</option>
+                  <option>Améliorer un produit existant</option>
+                  <option>Accompagnement complet</option>
                 </select>
+
+                <textarea
+                  name="message"
+                  placeholder="Décrivez brièvement votre projet"
+                  rows={4}
+                  className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg"
+                />
+
                 <button
-                  type="submit"
-                  className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                  disabled={loading}
+                  className="w-full py-4 font-semibold transition bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50"
                 >
-                  S'inscrire
+                  {loading ? "Analyse en cours..." : "Recevoir mon plan 🚀"}
                 </button>
+
+                <p className="text-xs text-center text-gray-400">
+                  📞 Réponse sous 24h – Sans engagement
+                </p>
               </form>
             </>
           ) : (
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Merci 🙏</h2>
-              <p className="text-green-600">
-                Votre inscription a bien été envoyée. Nous vous contacterons bientôt.
-              </p>
-            </div>
+            <p className="font-medium text-center text-green-400">
+              🎉 Merci ! Nous revenons vers vous très vite.
+            </p>
           )}
-        </div>
+        </section>
 
       </div>
+
+      <div className="mt-20 text-center">
+        <Link href="/" className="text-gray-500 hover:text-gray-700">
+          ← Retour à l’accueil
+        </Link>
+      </div>
+
     </main>
   )
 }

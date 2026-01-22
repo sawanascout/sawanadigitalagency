@@ -3,64 +3,75 @@ import Link from "next/link"
 
 export default function Home() {
   return (
-    <main className="w-full flex flex-col">
+    <main className="flex flex-col w-full">
 
       {/* ================= HERO ================= */}
-      <section className="relative w-full h-[85vh] flex items-center justify-center">
+      <section className="relative w-full h-[90vh] flex items-center justify-center">
         <Image
           src="/images/hero.jpg"
-          alt="SDA Hero"
+          alt="Sawana Digital Agency"
           fill
           priority
           className="object-cover"
         />
 
-        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-center px-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            SDA – Sawana Digital Agency
+        <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center bg-black/65">
+          <h1 className="mb-6 text-4xl font-bold leading-tight text-white md:text-6xl">
+            Accélérez votre réussite digitale
           </h1>
 
-          <p className="text-gray-200 max-w-2xl mb-8 text-base md:text-lg">
-            Agence digitale spécialisée dans le développement web, mobile
-            et les solutions numériques modernes.
+          <p className="max-w-3xl mb-10 text-base text-gray-200 md:text-lg">
+            Sawana Digital Agency accompagne entreprises, startups et particuliers
+            dans la création de solutions digitales modernes, performantes et évolutives.
           </p>
 
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/contact"
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="px-8 py-4 font-semibold text-white transition bg-blue-600 rounded-lg hover:bg-blue-700"
             >
-              Nous contacter
+              Parler à un expert
             </Link>
 
             <Link
               href="/contact"
-              className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+              className="px-8 py-4 font-semibold text-white transition bg-green-600 rounded-lg hover:bg-green-700"
             >
-              S’inscrire à une formation
+              Démarrer mon accompagnement 🚀
             </Link>
           </div>
+
+          <p className="mt-6 text-sm text-gray-300">
+            ✔ Réponse sous 24h • ✔ Sans engagement
+          </p>
         </div>
       </section>
 
       {/* ================= A PROPOS ================= */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+      <section className="px-6 py-24 bg-white">
+        <div className="grid items-center max-w-6xl mx-auto md:grid-cols-2 gap-14">
 
           <div>
-            <h2 className="text-3xl font-bold mb-4">Qui sommes-nous ?</h2>
-            <p className="text-gray-600 leading-relaxed">
-              SDA est une agence digitale orientée vers l’innovation.
-              Nous accompagnons entreprises, startups et particuliers
-              dans la création de solutions digitales performantes,
-              sécurisées et évolutives.
+            <h2 className="mb-6 text-3xl font-bold md:text-4xl">
+              Une agence digitale orientée résultats
+            </h2>
+            <p className="mb-6 leading-relaxed text-gray-600">
+              Sawana Digital Agency conçoit et développe des solutions numériques
+              adaptées à vos besoins. Notre mission est simple :
+              <strong> transformer vos idées en produits digitaux efficaces</strong>.
             </p>
+
+            <ul className="space-y-3 text-gray-600">
+              <li>✅ Accompagnement personnalisé</li>
+              <li>✅ Technologies modernes</li>
+              <li>✅ Support humain et réactif</li>
+            </ul>
           </div>
 
-          <div className="relative h-72 rounded-xl overflow-hidden shadow-lg">
+          <div className="relative overflow-hidden shadow-xl h-80 rounded-2xl">
             <Image
               src="/images/about.jpg"
-              alt="À propos SDA"
+              alt="À propos Sawana Digital Agency"
               fill
               className="object-cover"
             />
@@ -70,19 +81,19 @@ export default function Home() {
       </section>
 
       {/* ================= SERVICES ================= */}
-      <section className="py-20 px-6 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
+      <section className="px-6 py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl">
 
-          <h2 className="text-3xl font-bold text-center mb-14">
-            Nos Services
+          <h2 className="mb-16 text-3xl font-bold text-center md:text-4xl">
+            Nos expertises
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
 
-            {/* SERVICE 1 */}
+            {/* WEB */}
             <Link href="/services/web">
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer">
-                <div className="relative h-48">
+              <div className="overflow-hidden transition bg-white shadow-md cursor-pointer rounded-2xl hover:shadow-2xl">
+                <div className="relative h-52">
                   <Image
                     src="/images/web.jpg"
                     alt="Développement Web"
@@ -90,21 +101,22 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold mb-2">
+                <div className="p-8 text-center">
+                  <h3 className="mb-3 text-xl font-semibold">
                     Développement Web
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    Sites vitrines, plateformes web, applications modernes et performantes.
+                  <p className="text-sm text-gray-600">
+                    Sites vitrines, plateformes web et applications performantes,
+                    conçues pour évoluer avec votre activité.
                   </p>
                 </div>
               </div>
             </Link>
 
-            {/* SERVICE 2 */}
+            {/* MOBILE */}
             <Link href="/services/mobile">
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer">
-                <div className="relative h-48">
+              <div className="overflow-hidden transition bg-white shadow-md cursor-pointer rounded-2xl hover:shadow-2xl">
+                <div className="relative h-52">
                   <Image
                     src="/images/mobile.jpg"
                     alt="Applications Mobiles"
@@ -112,21 +124,22 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold mb-2">
+                <div className="p-8 text-center">
+                  <h3 className="mb-3 text-xl font-semibold">
                     Applications Mobiles
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    Applications Android et multiplateformes intuitives.
+                  <p className="text-sm text-gray-600">
+                    Applications Android et multiplateformes,
+                    fluides, intuitives et sécurisées.
                   </p>
                 </div>
               </div>
             </Link>
 
-            {/* SERVICE 3 */}
+            {/* DIGITAL */}
             <Link href="/services/digital">
-              <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition cursor-pointer">
-                <div className="relative h-48">
+              <div className="overflow-hidden transition bg-white shadow-md cursor-pointer rounded-2xl hover:shadow-2xl">
+                <div className="relative h-52">
                   <Image
                     src="/images/digital.jpg"
                     alt="Solutions Digitales"
@@ -134,12 +147,13 @@ export default function Home() {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-6 text-center">
-                  <h3 className="text-xl font-semibold mb-2">
+                <div className="p-8 text-center">
+                  <h3 className="mb-3 text-xl font-semibold">
                     Solutions Digitales
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    Automatisation, outils métiers et solutions sur mesure.
+                  <p className="text-sm text-gray-600">
+                    Automatisation, outils métiers et solutions sur mesure
+                    pour optimiser votre productivité.
                   </p>
                 </div>
               </div>
@@ -149,27 +163,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= CTA ================= */}
-      <section className="py-20 bg-blue-600 text-white text-center px-6">
-        <h2 className="text-3xl font-bold mb-4">
-          Un projet ? Une formation ?
+      {/* ================= CTA FINAL ================= */}
+      <section className="px-6 py-24 text-center text-white bg-gray-900">
+        <h2 className="mb-6 text-3xl font-bold md:text-4xl">
+          Prêt à lancer votre projet ?
         </h2>
-        <p className="mb-8">
-          Contactez-nous dès maintenant et transformons votre idée en réalité.
+        <p className="max-w-2xl mx-auto mb-10 text-gray-300">
+          Expliquez-nous votre besoin et recevez un plan d’accompagnement personnalisé.
         </p>
 
         <Link
           href="/contact"
-          className="inline-block px-8 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition"
+          className="inline-block px-10 py-4 font-semibold transition bg-green-600 rounded-lg hover:bg-green-700"
         >
-          Contactez-nous
+          Recevoir mon plan 🚀
         </Link>
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer className="bg-gray-900 text-gray-300 py-8 text-center text-sm">
-        <p>© {new Date().getFullYear()} SDA – Sawana Digital Agency</p>
-        <p className="mt-2">Innovation digitale au service de vos projets.</p>
+      <footer className="py-10 text-sm text-center text-gray-400 bg-black">
+        <p>© {new Date().getFullYear()} Sawana Digital Agency</p>
+        <p className="mt-2">Innovation digitale au service de vos projets</p>
       </footer>
 
     </main>
