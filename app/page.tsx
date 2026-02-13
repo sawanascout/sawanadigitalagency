@@ -37,7 +37,7 @@ export default function Home() {
               href="/contact"
               className="px-8 py-4 font-semibold text-white transition bg-green-600 rounded-lg hover:bg-green-700"
             >
-              Démarrer mon accompagnement 🚀
+              Démarrer mon accompagnement 
             </Link>
           </div>
 
@@ -176,7 +176,7 @@ export default function Home() {
           href="/contact"
           className="inline-block px-10 py-4 font-semibold transition bg-green-600 rounded-lg hover:bg-green-700"
         >
-          Recevoir mon plan 🚀
+          Recevoir mon plan 
         </Link>
       </section>
 
